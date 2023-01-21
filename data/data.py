@@ -15,6 +15,6 @@ class filmDataset(torch.utils.data.Dataset):
         user = self.user_list[index]
         film = self.film_list[index]
         rating = self.rating_list[index]
-        return (torch.tensor(user), 
-                torch.tensor(film), 
-                torch.tensor(rating))
+        return (torch.tensor(user, dtype=torch.long), 
+                torch.tensor(film, dtype=torch.long), 
+                torch.tensor(rating, dtype=torch.long))
