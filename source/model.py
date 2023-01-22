@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class NCF(nn.Module):
-    def __init__(self, num_users, num_films, embed_dim=64,
+    def __init__(self, num_users, num_films, embed_dim=32,
     hidden_layers = (64, 32, 16, 8), output_range = (1, 5),
     dropout_rate = None ):
         super(NCF, self).__init__()
@@ -20,15 +20,15 @@ class NCF(nn.Module):
         self.norm_range = abs(output_range[1] - output_range[0]) +1
 
     def _MLP(self, hidden_layer_unit, embed_unit, dropout):
-        assert hidden_layer_unit == 2 * embed_unit
+        assert hidden_layer_unit[0] == 2 * embed_unit
         hidden_layers = []
         initial_input = hidden_layer_unit[0]
-        for i in hidden_layer_unit[1:]:
-            hidden_layers.append(nn.Linear(initial_input, hidden_layer_unit[i]))
-            hidden_layers.append(nn.ReLU)
+        for layer in hidden_layer_unit[1:]:
+            hidden_layers.append(nn.Linear(initial_input, layer))
+            hidden_layers.append(nn.ReLU())
             if dropout:
                 hidden_layers.append(nn.Dropout(dropout))
-            initial_input = hidden_layer_unit[i]
+            initial_input = layer
         
         hidden_layers.append(nn.Linear(hidden_layer_unit[-1], 1))
         hidden_layers.append(nn.Sigmoid())
