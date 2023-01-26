@@ -14,10 +14,16 @@ class NCF(nn.Module):
         if dropout_rate:
             self.dropout = nn.Dropout(dropout_rate)
         self._init_params()
-
         assert output_range and len(output_range) == 2
         self.norm_min = min(output_range)
         self.norm_range = abs(output_range[1] - output_range[0]) +1
+        self.config = {
+            'num_users': num_users,
+            'num_films': num_films,
+            'embed_dim': embed_dim,
+            'hidden_layers': hidden_layers,
+        }
+
 
     def _MLP(self, hidden_layer_unit, embed_unit, dropout):
         assert hidden_layer_unit[0] == 2 * embed_unit
