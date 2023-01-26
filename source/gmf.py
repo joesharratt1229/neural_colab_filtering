@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 
 class GMF(nn.Module):
-    def __init__(self, num_users, num_films, embed_dim=32):
+    def __init__(self, num_users, num_films, embed_dim=32,
+    output_range = (1, 5)):
         super().__init__()
         self.num_users = num_users
         self.num_films = num_films
@@ -11,6 +12,10 @@ class GMF(nn.Module):
         self.layers = nn.Sequential(
             nn.Linear(embed_dim, 1),
             nn.Sigmoid())
+        
+        self.norm_min = min(output_range)
+        self.norm_range = abs(output_range[1] - output_range[0]) +1
+        
         self.config = { 'num_users': num_users, 
         'num_films': num_films, 
         'embed_dim': embed_dim }
@@ -20,4 +25,5 @@ class GMF(nn.Module):
         item_embedding = self.embedding_item(item_indices)
         x = torch.mul(user_embedding, item_embedding)
         x = self.layers(x)
-        return x
+        normalised_output = x * self.norm_range + self.norm_min
+        return normalised_output
